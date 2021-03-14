@@ -67,7 +67,7 @@ Get-VMSystemSwitchExtension -Name "Open vSwitch Extension"
 Id            : 583CC151-73EC-4A6A-8B47-578297AD7623                                                                                                                                                                       
 Name          : Open vSwitch Extension                                                                                                                                                                                     
 Vendor        : The Linux Foundation (R)                                                                                                                                                                                   
-Version       : 2.13.1.38433                                                                                                                                                                                               
+Version       : 2.13.1.38433                                                                                                                                                                            
 ExtensionType : Forwarding                                                                                                                                                                                                 
 CimSession    : CimSession: .                                                                                                                                                                                              
 ComputerName  : A-MS-2000-WIN-0                                                                                                                                                                                            
@@ -126,3 +126,28 @@ Wuauclt /detectnow
 
 Restart-computer 
 ```
+
+## Get-AuthenticodeSignature
+
+``` powershell
+PS > Get-AuthenticodeSignature .\OVSExt.sys
+
+
+    目录: D:\bugs
+
+
+SignerCertificate                         Status                                 Path
+-----------------                         ------                                 ----
+6C83CD9531F7BC98D288E596341C06326B94B21B  UnknownError                           OVSExt.sys
+```
+
+<https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/get-authenticodesignature?view=powershell-7.1>
+
+<https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.signaturestatus?view=powershellsdk-7.0.0>
+
+## Windows TCP statistics
+
+``` powershell
+netstat -n -s -p tcp
+```
+

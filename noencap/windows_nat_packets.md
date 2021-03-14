@@ -72,7 +72,8 @@ tcpdump: listening on ens192, link-type EN10MB (Ethernet), capture size 262144 b
 
 ## Windows container --> NAT(svc) --> Linux Container: cksum error found
 
-On dst host
+On dst host:
+192.168.187.6.49177 > 192.168.185.5.8080
 ```
 root@a-ms-1000-1:/home/ubuntu/noencap# tcpdump -i ens192 -ne host 192.168.187.6 -vvv
 tcpdump: listening on ens192, link-type EN10MB (Ethernet), capture size 262144 bytes

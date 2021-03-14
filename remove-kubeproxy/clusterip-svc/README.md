@@ -79,7 +79,7 @@ Reply: (RemotePodIP, GwIP) --> unDNAT(SVCIP, GwIP) --> gw --> host
 # Add route svcIP.nexthop = self, iface=gw
 $SVCIP="10.97.77.241"
 $GwIP="172.16.2.1"
-New-NetRoute -InterfaceAlias antrea-gw0 -DestinationPrefix $SVCIP/32 -NextHop $SGWIP
+New-NetRoute -InterfaceAlias antrea-gw0 -DestinationPrefix $SVCIP/32 -NextHop $GWIP
 
 # Add arp respondor for svcip
 $SVCIPHex="0xA614DF1" # 10.111.43.196

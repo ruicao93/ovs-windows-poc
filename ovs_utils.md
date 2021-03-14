@@ -50,6 +50,35 @@ ovs-ofctl add-flow br-ext "table=10,cookie=0x520,priority=200,ip actions=ct(tabl
 ovs-ofctl add-flow br-ext "table=11,cookie=0x520,priority=200,in_port=LOCAL,ip,nw_src=192.168.187.0/24,ct_state=+new+trk actions=ct(commit,table=20,zone=65520,nat(src=$NodeIP))"
 ```
 
+### IGMP
+
+```
+ovs-ofctl add-flow br-int "table=0,cookie=0x999,priority=250,ip,ip_proto=2 actions=drop"
+```
+
+
+```
+301Z|00087|dpif(handler2)|WARN|system@ovs-system: execute ct(zone=65500,nat),recirc(0x1) failed (not supported) on packet igmp,vlan_tci=0x0000,dl_src=00:50:56:a7:13:d4,dl_dst=01:00:5e:00:00:16,nw_src=10.176.26.32,nw_dst=224.0.0.22,nw_tos=0,nw_ecn=0,nw_ttl=1,igmp_type=34,igmp_code=0
+ with metadata skb_priority(0),skb_mark(0),in_port(1) mtu 0
+```
+
+### eth_type(0x05ff)
+ovs-ofctl add-flow br-int "table=0,cookie=0x999,priority=250,eth_type=0x05ff actions=drop"
+
+
+
+```
+WARN|Dropped 53 log messages in last 58 seconds (most recently, 2 seconds ago) due to excessive rate
+2021-03-10T13:57:19.397Z|00068|odp_util(handler2)|WARN|invalid Ethertype 1535 in flow key
+2021-03-10T13:57:19.397Z|00069|odp_util(handler2)|WARN|Dropped 53 log messages in last 58 seconds (most recently, 2 seconds ago) due to excessive rate
+2021-03-10T13:57:19.397Z|00070|odp_util(handler2)|WARN|the flow key in error is: recirc_id(0),ct_state(0),ct_zone(0),ct_mark(0),ct_label(0),ct_tuple4(src=0.0.0.0,dst=0.0.0.0,proto=0,tp_src=0,tp_dst=0),eth(src=68:4f:64:15:5b:9a,dst=01:00:0c:cc:cc:cd),in_port(1),eth_type(0x05ff)
+```
+
+<https://www.experts-exchange.com/articles/8353/VMware-ESX-Beacon-Probing-Explained.html>
+```
+ESX 3.5 uses an ethertype of 0x05ff. The probes contain the virtual MAC associated with the physical NIC and the name of the interface.
+```
+
 ### Output
 
 ovs-ofctl add-flow br-int "table=0,cookie=0x520,in_port=$TunPort,priority=200,ip actions=mod_dl_src:$GwMac,mod_dl_dst=$PodMac,output:$PodPort"
@@ -70,4 +99,5 @@ $OVS_DB_SCHEMA_PATH = "$OVSInstallDir\usr\share\openvswitch\vswitch.ovsschema"
 $OVS_DB_PATH="c:\test\ovs.db"
 ovsdb-tool create "$OVS_DB_PATH" "$OVS_DB_SCHEMA_PATH"
 ```
+
 

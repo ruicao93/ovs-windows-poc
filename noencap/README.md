@@ -1,5 +1,14 @@
 
 
+## Windows checksum issue
+
+We found that the TCP checksum is incorrect after DNAT/d-SNAT/mod_nw_dst.
+
+**Update 1**
+For topo: local process --> br-int --> DNAT --> uplink --> external network --> Server
+
+If we disable the TCP checksum offload on `br-int` and `$uplink` interfaces. The tcp cskum of output packets will be correct.
+
 
 ## How linux handle invalid TCP checksum?
 
