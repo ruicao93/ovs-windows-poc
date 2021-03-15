@@ -42,6 +42,7 @@ $conntrackStateTable=31
 $SVCDnatTable=40
 $serviceLBTable=41
 $l3ForwardingTable=70
+$l2ForwardingCalcTable=80
 $conntrackCommitTable=105
 $L2ForwardingOutTable=110
 $UplinkTable=5
@@ -77,7 +78,8 @@ ovs-ofctl add-flow br-int "table=$NodePortFilterTable2, cookie=$Cookie,priority=
 ## DnatTable
 ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$Cookie,priority=190,ip,ct_state=+new+trk actions=load:0x1->NXM_NX_REG8[],ct(commit,table=$PostDnatTable,zone=$DnatCTZone,nat(dst=$VIP))"
 ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$Cookie,priority=190,ip,ct_state=-new+trk actions=load:0x1->NXM_NX_REG8[],resubmit(,$PostDnatTable)"
-ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$Cookie,priority=200,ip,reg8=0x2/0xffff actions=output:$GwPort"
+# ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$Cookie,priority=200,ip,reg8=0x2/0xffff actions=output:$GwPort"
+ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$TestCookie,priority=200,ip,reg8=0x2/0xffff,reg0=0x10000/0x10000 actions=output:NXM_NX_REG1[]"
 ovs-ofctl add-flow br-int "table=$DnatTable, cookie=$Cookie,priority=0 actions=drop"
 
 # Post DnatTable
@@ -89,7 +91,8 @@ ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$Cookie,priority=190,reg8=0x
 ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$Cookie,priority=190,reg8=0x1/0xffff,ip,ct_state=-new+trk actions=resubmit(,$PostSnatTable)"
 ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$Cookie,priority=190,ip,reg8=0x2/0xffff,ct_state=-new+trk actions=ct(table=$DnatTable,zone=$DnatCTZone,nat)"
 # For LocalNode --> LocalNodePort case
-ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$TestCookie,priority=190,ip,reg8=0x2/0xffff,ct_state=+new+trk actions=$GwPort"
+#ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$TestCookie,priority=190,ip,reg8=0x2/0xffff,ct_state=+new+trk actions=$GwPort"
+ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$TestCookie,priority=190,ip,reg8=0x2/0xffff,ct_state=+new+trk,reg0=0x10000/0x10000 actions=output:NXM_NX_REG1[]"
 ovs-ofctl add-flow br-int "table=$SnatTable, cookie=$Cookie,priority=0 actions=drop"
 
 ## The default next hop is conntrackTable
@@ -102,7 +105,9 @@ ovs-ofctl add-flow br-int "table=$PostSnatTable,cookie=$Cookie,priority=0,ip act
 ovs-ofctl add-flow br-int "table=$conntrackStateTable, cookie=$Cookie,priority=210,ip,$markTrafficFromUplink,ct_state=+new+trk,reg8=0x1/0xffff actions=resubmit(,$SVCDnatTable),resubmit(,$serviceLBTable)"
 
 ## Reply
+
 # The source IP of reply raffic after unDNAT is VIP, mark the reply direction packets with reg8=0x2/0xffff
+ovs-ofctl add-flow br-int "table=$l2ForwardingCalcTable, cookie=$TestCookie,priority=220,ip,dl_dst=$BrIntMac  actions=load:0x2->NXM_NX_REG1[],load:0x1->NXM_NX_REG0[16],resubmit(,105)"
 ovs-ofctl add-flow br-int "table=$L2ForwardingOutTable, cookie=$Cookie,priority=220,ip,nw_src=$VIP  actions=load:0x2->NXM_NX_REG8[],resubmit(,$PostSnatTable)"
 
 ```

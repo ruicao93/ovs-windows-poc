@@ -76,6 +76,7 @@ ReplyMatch: (LocalNodeIP, GwIP) && from local
 
 - Option1: Prefer
 Req: (LocalPodIP, LocalNodeIP)  --> Gw --> UserProxy: DNAT(LocalNodeIP, VIP) --> ...
+Req: (LocalPodIP, LocalNodeIP)  --> Gw  ==>  (Access NodePort service from host)
 
 Reply: ... UserProxy --> unDNAT(LocalNodeIP, LocalPodIP) --> br-int --> Source local pod
 
@@ -96,7 +97,7 @@ Reply: LocalPod --> (LocalPodIP, GwIP) --> unDNAT(VIP, GwIP) --> gw --> UserProx
 
 7. (LocalNode, RemotePod)
 
-Req: (LocalNodeIP, LocalNodeIP) --> UserProxy: FullNAT(GwIP, VIP) --> gw --> DNAT(GwIP, RemotePodIP) --> RemotePod
+Req: (LocalNodeIP, LocalNodeIPPort) --> UserProxy: FullNAT(GwIP, VIP) --> gw --> DNAT(GwIP, RemotePodIP) --> RemotePod
 Reply: RemotePod --> (RemotePodIP, GwIP) --> unDNAT(VIP, GwIP) --> gw --> UserProxy: unFullNat(LocalNodeIP, LocalNodeIP) --> source process
 
 
